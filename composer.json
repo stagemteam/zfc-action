@@ -1,12 +1,13 @@
 {
-  "name": "stagem/zfc-admin",
-  "description": "ZF Admin module",
+  "name": "stagem/zfc-action",
+  "description": "ZF-Expressive auto-wiring Action",
   "type": "zf-module",
   "license": "MIT",
   "keywords": [
     "zf2",
     "zf-expressive",
-    "admin"
+    "action",
+    "auto-wiring"
   ],
   "authors": [
     {
@@ -20,7 +21,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Stagem\\ZfcAdmin\\": "src/"
+      "Stagem\\ZfcAction\\": "src/"
     }
   }
 }
