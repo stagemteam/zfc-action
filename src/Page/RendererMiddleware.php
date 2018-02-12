@@ -53,7 +53,7 @@ class RendererMiddleware implements MiddlewareInterface
         }
 
         $templates = $this->resolveTemplates($request);
-        $viewModel->setVariable('layout', $templates['layout']);
+        !$viewModel->getVariable('layout') || $viewModel->setVariable('layout', $templates['layout']);
 
         return new HtmlResponse($this->renderer->render($templates['name'], $viewModel));
     }
