@@ -5,11 +5,11 @@ namespace Stagem\ZfcAction;
 return [
     'routes' => [
         [
-            'name' => 'home',
+            'name' => 'default/home',
             'path' => '/',
             'middleware' => [\Stagem\Layout\Action\HomeAction::class, Page\RendererMiddleware::class],
             'allowed_methods' => ['GET'],
-            'options' => [ // this don't work automatically, you need check this by hand
+            'options' => [ // this doesn't set automatically, you need check this by hand
                 'resource' => 'layout',
                 'action' => 'home',
             ]
