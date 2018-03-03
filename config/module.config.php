@@ -10,7 +10,8 @@ return [
             'middleware' => [\Stagem\Layout\Action\HomeAction::class, Page\RendererMiddleware::class],
             'allowed_methods' => ['GET'],
             'options' => [ // this doesn't set automatically, you need check this by hand
-                'resource' => 'layout',
+                'area' => 'home',
+                'resource' => 'index',
                 'action' => 'home',
             ]
         ],
