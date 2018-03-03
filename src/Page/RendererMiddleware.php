@@ -78,7 +78,7 @@ class RendererMiddleware implements MiddlewareInterface
         if (!$module || !$action) {
             throw new RuntimeException(
                 'Cannot resolve action name. '
-                . 'Check if your route has "module" and "action" as named variables or add relative options to route'
+                . 'Check if your route has "resource" and "action" as named variables or add relative options to route'
             );
         }
 
