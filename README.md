@@ -53,5 +53,17 @@ return [
 ### Advanced Usage
 Advanced usage allow use standardized and flexible approach with module naming on all application level.
 
-> Before continue reading you should install `stagem/zfc-entity`  
+> Before continue reading you should install `stagem/zfc-entity` 
+
+## Custom implementation
+If you want use in third party packages you have to prepare CurrentHelper for usage. You should call next code before 
+*controller/action* dispatching:
+```php
+$this->currentHelper->setDefaultContext($actionOtControlletClassName);
+$this->currentHelper->setResource($request->getAttribute('resource', self::DEFAULT_RESOURCE));
+$this->currentHelper->setAction($request->getAttribute('action', self::DEFAULT_ACTION));
+$this->currentHelper->setRequest($request);
+$this->currentHelper->setRoute($route->getMatchedRoute());
+$this->currentHelper->setMatchedParams($route->getMatchedParams());
+```
 
