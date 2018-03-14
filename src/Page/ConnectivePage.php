@@ -118,6 +118,9 @@ class ConnectivePage implements MiddlewareInterface
     protected function configureCurrentPlugin($actionClass, ServerRequestInterface $request)
     {
         if ($this->currentHelper) {
+            /**
+             * @todo-popov Exclude initialization to CurrentMiddleware module
+             */
             $route = $request->getAttribute(RouteResult::class);
             $this->currentHelper->setDefaultContext($actionClass);
             $this->currentHelper->setResource($request->getAttribute('resource', self::DEFAULT_RESOURCE));
