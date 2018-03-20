@@ -66,13 +66,14 @@ class ConnectivePage implements MiddlewareInterface
     protected function getAction(ServerRequestInterface $request)
     {
         $filter = new DashToCamelCase();
-        $route = $request->getAttribute(RouteResult::class)->getMatchedRoute();
+        //$route = $request->getAttribute(RouteResult::class)->getMatchedRoute();
 
         $name = [];
         $name['resource'] = lcfirst($filter->filter($request->getAttribute('resource', self::DEFAULT_RESOURCE)));
         $name['namespace'] = $this->getNamespace(array_shift($name));
         $name['dir'] = 'Action';
-        $area = $route->getOptions()['area'] ?? RendererMiddleware::AREA_DEFAULT;
+        //$area = $route->getOptions()['area'] ?? RendererMiddleware::AREA_DEFAULT;
+        $area = $request->getAttribute('area', RendererMiddleware::AREA_DEFAULT);
         if ($area !== RendererMiddleware::AREA_DEFAULT) {
             $name['area'] = ucfirst($area);
         }

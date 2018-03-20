@@ -71,10 +71,13 @@ class RendererMiddleware implements MiddlewareInterface
     {
         $route = $request->getAttribute(Router\RouteResult::class)->getMatchedRoute();
 
-        $options = $route->getOptions();
-        $module = $request->getAttribute('resource', $options['resource'] ?? '');
-        $action = $request->getAttribute('action', $options['action'] ?? '');
-        $area = $options['area'] ?? self::AREA_DEFAULT;
+        #$options = $route->getOptions();
+        #$module = $request->getAttribute('resource', $options['resource'] ?? '');
+        #$action = $request->getAttribute('action', $options['action'] ?? '');
+        #$area = $request->getAttribute('area', self::AREA_DEFAULT);
+        $module = $request->getAttribute('resource');
+        $action = $request->getAttribute('action');
+        $area = $request->getAttribute('area', self::AREA_DEFAULT);
 
         if (!$module || !$action) {
             throw new RuntimeException(
