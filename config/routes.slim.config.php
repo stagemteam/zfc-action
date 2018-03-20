@@ -32,6 +32,7 @@ $default = [
 
 return [
     ArrayUtils::merge($default, [
+        'name' => 'default/home',
         'path' => '(/:locale)/',
         'middleware' => [\Stagem\Layout\Action\HomeAction::class, Page\RendererMiddleware::class],
         'allowed_methods' => ['GET'],
