@@ -20,7 +20,7 @@ use Zend\Stdlib\ArrayUtils;
 $default = [
     'options' => [
         'conditions' => [
-            'locale' => '[a-z]{2}',
+            'lang' => '[a-z]{2}',
         ],
         'defaults' => [
             'resource' => 'index',
@@ -33,7 +33,7 @@ $default = [
 return [
     ArrayUtils::merge($default, [
         'name' => 'default/home',
-        'path' => '(/:locale)/',
+        'path' => '(/:lang)/',
         'middleware' => [\Stagem\Layout\Action\HomeAction::class, Page\RendererMiddleware::class],
         'allowed_methods' => ['GET'],
         'options' => [
@@ -44,7 +44,7 @@ return [
     ]),
     ArrayUtils::merge($default, [
         'name' => 'default',
-        'path' => '(/:locale)(/:resource(/:action(/:id)))',
+        'path' => '(/:lang)(/:resource(/:action(/:id)))',
         //'path' => '/[:resource[/[:action[/[:id]]]]]',
         'middleware' => [Page\ConnectivePage::class, Page\RendererMiddleware::class],
         'options' => [
@@ -63,7 +63,7 @@ return [
     ArrayUtils::merge($default, [
         'name' => 'default/page',
         //'path' => '/[:resource[/[:action[/page:page]]]]',
-        'path' => '(/:locale)(/:resource(/:action(/page/:page)))',
+        'path' => '(/:lang)(/:resource(/:action(/page/:page)))',
         'middleware' => [Page\ConnectivePage::class, Page\RendererMiddleware::class],
         'options' => [ // this don't work automatically, you need check this by hand
             'conditions' => [
@@ -81,7 +81,7 @@ return [
     ArrayUtils::merge($default, [
         'name' => 'default/more',
         //'path' => '/[:resource[/[:action[/:more]]]]',
-        'path' => '(/:locale)(/:resource(/:action(/:more+)))',
+        'path' => '(/:lang)(/:resource(/:action(/:more+)))',
         'middleware' => [Page\ConnectivePage::class, Page\RendererMiddleware::class],
         'options' => [
             'conditions' => [
