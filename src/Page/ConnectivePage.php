@@ -51,9 +51,9 @@ class ConnectivePage implements MiddlewareInterface
     )
     {
         $this->actionFactory = $actionFactory;
-        $this->config = $config;
+        //$this->config = $config;
         $this->currentHelper = $currentHelper;
-        $this->moduleHelper = $moduleHelper;
+        //$this->moduleHelper = $moduleHelper;
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -65,7 +65,7 @@ class ConnectivePage implements MiddlewareInterface
 
     protected function getAction(ServerRequestInterface $request)
     {
-        $filter = new DashToCamelCase();
+        /*$filter = new DashToCamelCase();
         //$route = $request->getAttribute(RouteResult::class)->getMatchedRoute();
 
         $name = [];
@@ -79,9 +79,11 @@ class ConnectivePage implements MiddlewareInterface
         }
         $name['action'] = $filter->filter($request->getAttribute('action', self::DEFAULT_ACTION));
 
-        $actionClass = $this->getActionClass($name);
+        $actionClass = $this->getActionClass($name);*/
 
-        $this->configureCurrentPlugin($actionClass, $request);
+        //$this->configureCurrentPlugin($actionClass, $request);
+
+        $actionClass = $this->currentHelper->getDefaultContext();
 
         $action = ($this->actionFactory)($actionClass);
 
@@ -90,7 +92,7 @@ class ConnectivePage implements MiddlewareInterface
         return $action;
     }
 
-    protected function getActionClass($name)
+    /*protected function getActionClass($name)
     {
         unset($name['resource']);
 
@@ -128,7 +130,7 @@ class ConnectivePage implements MiddlewareInterface
             //$this->currentHelper->setRouteName($route->getMatchedRouteName());
             //$this->currentHelper->setRouteParams($route->getMatchedParams());
         }
-    }
+    }*/
 
     protected function configureEventManager($action)
     {
