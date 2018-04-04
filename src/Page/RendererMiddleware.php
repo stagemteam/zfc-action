@@ -15,15 +15,19 @@
 
 namespace Stagem\ZfcAction\Page;
 
+use Fig\Http\Message\StatusCodeInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Zend\Diactoros\Response\HtmlResponse;
+use Zend\Diactoros\Response\JsonResponse;
+use Zend\Diactoros\Response\TextResponse;
 use Zend\Expressive\Router;
 use Zend\Expressive\Template;
 use Zend\Stdlib\Exception\RuntimeException;
 use Zend\View\Model\ViewModel;
+use Zend\View\Model\JsonModel;
 
 class RendererMiddleware implements MiddlewareInterface
 {
@@ -50,6 +54,10 @@ class RendererMiddleware implements MiddlewareInterface
     {
         if (!($viewModel = $request->getAttribute(ViewModel::class))) {
             return $handler->handle($request);
+        }
+
+        if ($viewModel->terminate() && $viewModel instanceof JsonModel) {
+             return new JsonResponse($viewModel->getVariables());
         }
 
         $templates = $this->resolveTemplates($request);
