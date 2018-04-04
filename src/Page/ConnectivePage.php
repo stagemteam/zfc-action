@@ -51,9 +51,9 @@ class ConnectivePage implements MiddlewareInterface
     )
     {
         $this->actionFactory = $actionFactory;
-        //$this->config = $config;
+        $this->config = $config;
         $this->currentHelper = $currentHelper;
-        //$this->moduleHelper = $moduleHelper;
+        $this->moduleHelper = $moduleHelper;
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -65,25 +65,8 @@ class ConnectivePage implements MiddlewareInterface
 
     protected function getAction(ServerRequestInterface $request)
     {
-        /*$filter = new DashToCamelCase();
-        //$route = $request->getAttribute(RouteResult::class)->getMatchedRoute();
-
-        $name = [];
-        $name['resource'] = lcfirst($filter->filter($request->getAttribute('resource', self::DEFAULT_RESOURCE)));
-        $name['namespace'] = $this->getNamespace(array_shift($name));
-        $name['dir'] = 'Action';
-        //$area = $route->getOptions()['area'] ?? RendererMiddleware::AREA_DEFAULT;
-        $area = $request->getAttribute('area', RendererMiddleware::AREA_DEFAULT);
-        if ($area !== RendererMiddleware::AREA_DEFAULT) {
-            $name['area'] = ucfirst($area);
-        }
-        $name['action'] = $filter->filter($request->getAttribute('action', self::DEFAULT_ACTION));
-
-        $actionClass = $this->getActionClass($name);*/
-
-        //$this->configureCurrentPlugin($actionClass, $request);
-
-        $actionClass = $this->currentHelper->getDefaultContext();
+        $actionClass = $this->getActionClass($request);
+        $this->currentHelper->setDefaultContext($actionClass);
 
         $action = ($this->actionFactory)($actionClass);
 
@@ -92,17 +75,26 @@ class ConnectivePage implements MiddlewareInterface
         return $action;
     }
 
-    /*protected function getActionClass($name)
+    protected function getActionClass($request)
     {
-        unset($name['resource']);
+        $name = [];
+        //$name['resource'] = lcfirst($this->currentHelper->currentResource());
+        $name['namespace'] = $this->getNamespace(lcfirst($this->currentHelper->currentResource()));
+        $name['dir'] = 'Action';
+        //$area = $route->getOptions()['area'] ?? RendererMiddleware::AREA_DEFAULT;
+        $area = $request->getAttribute('area', RendererMiddleware::AREA_DEFAULT);
+        if ($area !== RendererMiddleware::AREA_DEFAULT) {
+            $name['area'] = ucfirst($area);
+        }
+        $name['action'] = ucfirst($this->currentHelper->currentAction());
+
+        //unset($name['resource']);
 
         return implode('\\', $name) . 'Action';
     }
 
     protected function getNamespace($mnemo)
     {
-        // @todo Використовувати модуль Entity з Хмари. Дасть змогу визначати модуль на основі mnemo.
-        // @todo Відтестувати швидкість виконання і можливість кешування ццих запитів на рівні Doctrine
         $namespace = null;
         if ($this->moduleHelper && ($module = $this->moduleHelper->getBy($mnemo, 'mnemo'))) {
             $namespace = $module->getName();
@@ -117,20 +109,6 @@ class ConnectivePage implements MiddlewareInterface
 
         return $namespace;
     }
-
-    protected function configureCurrentPlugin($actionClass, ServerRequestInterface $request)
-    {
-        if ($this->currentHelper) {
-            //$route = $request->getAttribute(RouteResult::class);
-            $this->currentHelper->setDefaultContext($actionClass);
-            $this->currentHelper->setResource($request->getAttribute('resource', self::DEFAULT_RESOURCE));
-            $this->currentHelper->setAction($request->getAttribute('action', self::DEFAULT_ACTION));
-            //$this->currentHelper->setRequest($request);
-            //$this->currentHelper->setRoute($route->getMatchedRoute());
-            //$this->currentHelper->setRouteName($route->getMatchedRouteName());
-            //$this->currentHelper->setRouteParams($route->getMatchedParams());
-        }
-    }*/
 
     protected function configureEventManager($action)
     {

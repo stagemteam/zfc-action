@@ -69,7 +69,7 @@ class RendererMiddleware implements MiddlewareInterface
      */
     protected function resolveTemplates($request)
     {
-        $route = $request->getAttribute(Router\RouteResult::class)->getMatchedRoute();
+        #$route = $request->getAttribute(Router\RouteResult::class)->getMatchedRoute();
 
         #$options = $route->getOptions();
         #$module = $request->getAttribute('resource', $options['resource'] ?? '');
