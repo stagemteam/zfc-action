@@ -79,7 +79,9 @@ class ConnectivePage implements MiddlewareInterface
     {
         $name = [];
         //$name['resource'] = lcfirst($this->currentHelper->currentResource());
-        $name['namespace'] = $this->getNamespace(lcfirst($this->currentHelper->currentResource()));
+        $filter = new DashToCamelCase();
+
+        $name['namespace'] = $this->getNamespace(lcfirst($filter->filter($this->currentHelper->currentResource())));
         $name['dir'] = 'Action';
         //$area = $route->getOptions()['area'] ?? RendererMiddleware::AREA_DEFAULT;
         $area = $request->getAttribute('area', RendererMiddleware::AREA_DEFAULT);
