@@ -88,7 +88,7 @@ class ConnectivePage implements MiddlewareInterface
         if ($area !== RendererMiddleware::AREA_DEFAULT) {
             $name['area'] = ucfirst($area);
         }
-        $name['action'] = ucfirst($this->currentHelper->currentAction());
+        $name['action'] = ucfirst($filter->filter($this->currentHelper->currentAction()));
 
         //unset($name['resource']);
 
