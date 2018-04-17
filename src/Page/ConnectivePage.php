@@ -6,7 +6,6 @@ use Popov\ZfcEntity\Helper\ModuleHelper;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-//use Interop\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\MiddlewareInterface;
 
 use Zend\Expressive\Router\RouteResult;
@@ -100,8 +99,8 @@ class ConnectivePage implements MiddlewareInterface
         $namespace = null;
         if ($this->moduleHelper && ($module = $this->moduleHelper->getBy($mnemo, 'mnemo'))) {
             $namespace = $module->getName();
-        } elseif (isset($this->config['middleware'][$mnemo])) {
-            $namespace = $this->config['middleware'][$mnemo];
+        } elseif (isset($this->config['actions'][$mnemo])) {
+            $namespace = $this->config['actions'][$mnemo];
         } else {
             throw new RuntimeException(sprintf(
                 'Module for "%s" in not registered in configuration or database',

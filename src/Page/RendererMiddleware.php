@@ -22,12 +22,16 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Zend\Diactoros\Response\HtmlResponse;
 use Zend\Diactoros\Response\JsonResponse;
+use Zend\Diactoros\Response\SapiEmitter;
 use Zend\Diactoros\Response\TextResponse;
 use Zend\Expressive\Router;
 use Zend\Expressive\Template;
 use Zend\Stdlib\Exception\RuntimeException;
 use Zend\View\Model\ViewModel;
 use Zend\View\Model\JsonModel;
+use Zend\Http\Response\Stream as HttpStream;
+use Zend\Diactoros\Stream;
+use Zend\Diactoros\Response;
 
 class RendererMiddleware implements MiddlewareInterface
 {
@@ -56,7 +60,23 @@ class RendererMiddleware implements MiddlewareInterface
             return $handler->handle($request);
         }
 
-        if ($viewModel->terminate() && $viewModel instanceof JsonModel) {
+        if ($viewModel instanceof HttpStream) {
+            // @todo Improve realization
+            // maybe will be created bridge Stream
+            // @see https://gist.github.com/settermjd/feffc1c15a5bade95967be2229fa5537
+            // there is great Symfony Bundle https://github.com/symfony/psr-http-message-bridge
+            $body = new Stream('php://temp', 'w+');
+            $body->write($viewModel->getBody());
+
+            $response = new Response();
+            foreach ($viewModel->getHeaders() as $name => $header) {
+                $response = $response->withHeader($header->getFieldName(), $header->getFieldValue());
+            }
+            return $response->withBody($body)
+                ->withHeader('Content-Length', "{$viewModel->getContentLength()}");
+        }
+
+        if ($viewModel instanceof JsonModel && $viewModel->terminate()) {
              return new JsonResponse($viewModel->getVariables());
         }
 

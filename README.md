@@ -35,6 +35,22 @@ and register auto-wiring route in `config/routes.php`
 $app->injectRoutesFromConfig((new Stagem\ZfcAction\ConfigProvider())());
 ```
 
+
+> Notice. `slim/router` has problem with wildcard routes. That is why you should add to your `composer.json`
+```json
+{
+    "require": {
+        "acelaya/slim-2-router": "^2.7"
+    },
+    "repositories": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/popovserhii/slim-2-router"
+        }
+    ]
+}
+```
+
 ## Usage
 
 ### Standalone Usage
