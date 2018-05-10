@@ -12,19 +12,21 @@
  * @author Serhii Popov <popow.serhii@gmail.com>
  * @license https://opensource.org/licenses/MIT The MIT License (MIT)
  */
+
 namespace Stagem\ZfcAction;
 
 $routeDefault = [
     'type' => 'Segment',
     'options' => [
-        'route' => '/[:controller[/[:action]]]', // global route
+        'route' => '/[:resource[/[:action]]]', // global route
         'constraints' => [
             'controller' => '[a-zA-Z]?[a-zA-Z0-9_-]*',
             'action' => '[a-zA-Z]?[a-zA-Z0-9_-]*',
         ],
         'defaults' => [
-            'controller' => 'index',
-            'action' => 'index',
+            'middleware' => [Page\ConnectivePage::class, Page\RendererMiddleware::class],
+            //'controller' => 'index',
+            //'action' => 'index',
         ],
     ],
     'may_terminate' => true,
@@ -88,46 +90,6 @@ $routeDefault = [
 return [
     // default configuration for all modules
     'routes' => [
-        /*[
-            'name' => 'home',
-            'path' => '(/:lang)/',
-            'allowed_methods' => ['GET'],
-            'middleware' => Action\Template::class,
-            'options' => [
-                'conditions' => [
-                    'lang' => 'en|es',
-                ],
-                'defaults' => [
-                    'template' => 'Acelaya::home',
-                    'cacheable' => true,
-                ],
-            ],
-        ],*/
-
-        [
-            'name' => 'default/home',
-            'path' => '/',
-            'middleware' => [\Stagem\Layout\Action\HomeAction::class, Page\RendererMiddleware::class],
-            'allowed_methods' => ['GET'],
-            'options' => [ // this doesn't set automatically, you need check this by hand
-                'area' => 'home',
-                'resource' => 'index',
-                'action' => 'home',
-            ]
-        ],
-
-        [
-            'name' => 'default',
-            'path' => '/{resource:[a-z-]{3,}}[/[{action:[a-z-]{3,}}[/{id:\d+}[/{more:.*}]]]]',
-            'middleware' => [Page\ConnectivePage::class, Page\RendererMiddleware::class],
-            'options' => [ // this don't work automatically, you need check this by hand
-                'resource' => 'index',
-                'action' => 'index',
-            ]
-            //'allowed_methods' => ['GET', 'POST', 'PUT', 'DELETE'],
-        ],
-
-
         'default' => $routeDefault,
         // global frontend routes
         'home' => [
@@ -135,8 +97,10 @@ return [
             'options' => [
                 'route' => '/',
                 'defaults' => [
-                    'controller' => 'index',
-                    'action' => 'index',
+                    'middleware' => [Page\ConnectivePage::class, Page\RendererMiddleware::class],
+                    //'middleware' => [\Stagem\Layout\Action\HomeAction::class, Page\RendererMiddleware::class],
+                    //'controller' => 'index',
+                    //'action' => 'index',
                 ],
             ],
             'may_terminate' => true,
@@ -150,8 +114,9 @@ return [
             'options' => [
                 'route' => '/admin', //admin
                 'defaults' => [
-                    'controller' => 'index',
-                    'action' => 'index',
+                    'middleware' => [Page\ConnectivePage::class, Page\RendererMiddleware::class],
+                    //'controller' => 'index',
+                    //'action' => 'index',
                 ],
             ],
             'may_terminate' => true,

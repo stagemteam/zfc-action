@@ -3,16 +3,11 @@
 namespace Stagem\ZfcAction;
 
 return [
-    'routes' => require 'routes.slim.config.php',
+    // mvc
+    'router' => require 'routes.zend.config.php',
 
-    /*'actions' => [
-        'aliases' => [
-            'serial' => Controller\SerialController::class,
-        ],
-        'factories' => [
-            Controller\SerialController::class => Controller\Factory\SerialControllerFactory::class,
-        ],
-    ],*/
+    // middleware
+    'routes' => require 'routes.slim.config.php',
 
     'dependencies' => [
         'factories' => [

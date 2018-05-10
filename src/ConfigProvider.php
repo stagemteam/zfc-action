@@ -3,9 +3,8 @@
  * Enter description here...
  *
  * @category Stagem
- * @package Stagem_<package>
- * @author Popov Sergiy <popov@agere.com.ua>
- * @datetime: 04.12.2016 18:47
+ * @package Stagem_ZfcAction
+ * @author Serhii Popov <popow.serhii@gmail.com>
  */
 namespace Stagem\ZfcAction;
 
@@ -14,6 +13,7 @@ class ConfigProvider
     public function __invoke()
     {
         $config = include __DIR__ . '/../config/module.config.php';
+        unset($config['router']);
 
         return $config;
     }
