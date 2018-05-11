@@ -12,6 +12,7 @@ return [
     'dependencies' => [
         'factories' => [
             Page\ConnectivePage::class => Page\ConnectivePageFactory::class,
+            Page\RendererMiddleware::class => Page\Factory\RendererMiddlewareFactory::class,
         ],
     ],
 ];

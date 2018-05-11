@@ -18,17 +18,25 @@ namespace Stagem\ZfcAction\Page;
 use Fig\Http\Message\StatusCodeInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\RequestHandlerInterface;
-use Psr\Http\Server\MiddlewareInterface;
+
+// @todo wait until they will start to use Pst in codebase @see https://github.com/zendframework/zend-mvc/blob/master/src/MiddlewareListener.php#L11
+//use Psr\Http\Server\MiddlewareInterface;
+//use Psr\Http\Server\RequestHandlerInterface;
+use Interop\Http\ServerMiddleware\MiddlewareInterface;
+use Interop\Http\Server\RequestHandlerInterface;
+
 use Zend\Diactoros\Response\HtmlResponse;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\Diactoros\Response\SapiEmitter;
 use Zend\Diactoros\Response\TextResponse;
-use Zend\Expressive\Router;
-use Zend\Expressive\Template;
+//use Zend\Expressive\Router;
+//use Zend\Expressive\Template;
 use Zend\Stdlib\Exception\RuntimeException;
 use Zend\View\Model\ViewModel;
 use Zend\View\Model\JsonModel;
+//use Zend\View\Renderer\PhpRenderer;
+use Zend\View\Renderer\RendererInterface;
+use Zend\Mvc\View\Http\ViewManager;
 use Zend\Http\Response\Stream as HttpStream;
 use Zend\Diactoros\Stream;
 use Zend\Diactoros\Response;
@@ -38,20 +46,19 @@ class RendererMiddleware implements MiddlewareInterface
     const AREA_DEFAULT = 'default';
 
     /**
-     * @var Router\RouterInterface
-     */
-    protected $router;
-
-    /**
-     * @var Template\TemplateRendererInterface
+     * @var RendererInterface
      */
     protected $renderer;
 
+    /**
+     * @var ViewManager
+     */
+    protected $view;
 
-    public function __construct(Router\RouterInterface $router, Template\TemplateRendererInterface $template = null)
+    public function __construct(RendererInterface $renderer, $view = null)
     {
-        $this->router   = $router;
-        $this->renderer = $template;
+        $this->renderer = $renderer;
+        $this->view = $view;
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -84,7 +91,13 @@ class RendererMiddleware implements MiddlewareInterface
         $viewModel->getVariable('layout') || $viewModel->setVariable('layout', $templates['layout']);
         $viewModel->getTemplate() || $viewModel->setTemplate($templates['name']);
 
-        $content = $this->renderer->render($viewModel->getTemplate(), $viewModel);
+        //$content = $this->renderer->render($viewModel->getTemplate(), $viewModel);
+        $content = $this->renderer->render($viewModel);
+        if ($this->view) {
+            $layout = $this->view->getViewModel();
+            $layout->setVariable('content', $content);
+            $content = $this->renderer->render($layout);
+        }
 
         return new HtmlResponse($content);
     }
@@ -97,12 +110,7 @@ class RendererMiddleware implements MiddlewareInterface
      */
     protected function resolveTemplates($request)
     {
-        #$route = $request->getAttribute(Router\RouteResult::class)->getMatchedRoute();
-
-        #$options = $route->getOptions();
-        #$module = $request->getAttribute('resource', $options['resource'] ?? '');
-        #$action = $request->getAttribute('action', $options['action'] ?? '');
-        #$area = $request->getAttribute('area', self::AREA_DEFAULT);
+        #$module = $request->getAttribute('resource', $request->getAttribute('controller'));
         $module = $request->getAttribute('resource');
         $action = $request->getAttribute('action');
         $area = $request->getAttribute('area', self::AREA_DEFAULT);

@@ -1,12 +1,18 @@
 <?php
 namespace Stagem\ZfcAction\Page;
 
+//class_alias('Interop\Http\Server\MiddlewareInterface', 'Interop\Http\ServerMiddleware\MiddlewareInterface');
+
 use Popov\ZfcCurrent\CurrentHelper;
 use Popov\ZfcEntity\Helper\ModuleHelper;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\RequestHandlerInterface;
-use Psr\Http\Server\MiddlewareInterface;
+
+// @todo wait until they will start to use Pst in codebase @see https://github.com/zendframework/zend-mvc/blob/master/src/MiddlewareListener.php#L11
+//use Psr\Http\Server\MiddlewareInterface;
+//use Psr\Http\Server\RequestHandlerInterface;
+use Interop\Http\ServerMiddleware\MiddlewareInterface;
+use Interop\Http\Server\RequestHandlerInterface;
 
 use Zend\Expressive\Router\RouteResult;
 use Zend\Diactoros\Response\HtmlResponse;
@@ -17,9 +23,9 @@ use Zend\EventManager\SharedEventManagerInterface;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerAwareTrait;
 use Zend\EventManager\EventManager;
+use Zend\Diactoros\ServerRequest;
 use Zend\Stdlib\Exception\RuntimeException;
 use Zend\View\Model\ViewModel;
-use Zend\Expressive\Template;
 use Zend\Filter\Word\DashToCamelCase;
 
 
@@ -57,6 +63,7 @@ class ConnectivePage implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        /** @var ServerRequest $action */
         $action = $this->getAction($request);
 
         return $action->process($request, $handler);

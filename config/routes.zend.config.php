@@ -20,13 +20,13 @@ $routeDefault = [
     'options' => [
         'route' => '/[:resource[/[:action]]]', // global route
         'constraints' => [
-            'controller' => '[a-zA-Z]?[a-zA-Z0-9_-]*',
+            'resource' => '[a-zA-Z]?[a-zA-Z0-9_-]*',
             'action' => '[a-zA-Z]?[a-zA-Z0-9_-]*',
         ],
         'defaults' => [
             'middleware' => [Page\ConnectivePage::class, Page\RendererMiddleware::class],
-            //'controller' => 'index',
-            //'action' => 'index',
+            'resource' => 'index',
+            'action' => 'index',
         ],
     ],
     'may_terminate' => true,
@@ -82,8 +82,7 @@ $routeDefault = [
         'wildcard' => [
             'type' => 'Wildcard',
             'priority' => 10,
-            'options' => [
-            ],
+            'options' => [],
         ],
     ],
 ];
@@ -99,8 +98,8 @@ return [
                 'defaults' => [
                     'middleware' => [Page\ConnectivePage::class, Page\RendererMiddleware::class],
                     //'middleware' => [\Stagem\Layout\Action\HomeAction::class, Page\RendererMiddleware::class],
-                    //'controller' => 'index',
-                    //'action' => 'index',
+                    'resource' => 'home',
+                    'action' => 'index',
                 ],
             ],
             'may_terminate' => true,
@@ -115,8 +114,9 @@ return [
                 'route' => '/admin', //admin
                 'defaults' => [
                     'middleware' => [Page\ConnectivePage::class, Page\RendererMiddleware::class],
-                    //'controller' => 'index',
-                    //'action' => 'index',
+                    'area' => 'admin',
+                    'resource' => 'dashboard',
+                    'action' => 'index',
                 ],
             ],
             'may_terminate' => true,
