@@ -93,8 +93,15 @@ class RendererMiddleware implements MiddlewareInterface
 
         //$content = $this->renderer->render($viewModel->getTemplate(), $viewModel);
         $content = $this->renderer->render($viewModel);
+
+        // "view" manager is set in MVC application only.
+        // We reject usage "layout" plugin in middleware.
+        // Instead if needed you should inject "layout" variable in your ViewModel.
+        // By default "layout/default" template is usage.
+        // This is correspond to "area" value in route option which is resolved to 'layout::' + $area.
         if ($this->view) {
             $layout = $this->view->getViewModel();
+            $layout->setTemplate($viewModel->getVariable('layout'));
             $layout->setVariable('content', $content);
             $content = $this->renderer->render($layout);
         }
@@ -123,12 +130,9 @@ class RendererMiddleware implements MiddlewareInterface
         }
 
         $layout = 'layout::' . $area;
-
-        $templateName = '';
-        if ($area !== self::AREA_DEFAULT) {
-            $templateName .= $area . '-';
-        }
-        $templateName .= $module . '::' . $action;
+        $templateName = ($area === self::AREA_DEFAULT)
+            ? $module . '::' . $action
+            : $module . '::' . $area . '/' . $action;
 
         return [
             'layout' => $layout,

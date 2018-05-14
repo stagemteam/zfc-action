@@ -89,6 +89,20 @@ $routeDefault = [
 return [
     // default configuration for all modules
     'routes' => [
+
+        'user::login' => [
+            'type' => 'Literal',
+            'priority' => 200,
+            'options' => [
+                'route' => '/login',
+                'defaults' => [
+                    'controller' => 'user',
+                    'action' => 'login',
+                ],
+            ],
+            'may_terminate' => true,
+        ],
+
         'default' => $routeDefault,
         // global frontend routes
         'home' => [
