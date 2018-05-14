@@ -1,4 +1,5 @@
 <?php
+
 namespace Stagem\ZfcAction\Page;
 
 //class_alias('Interop\Http\Server\MiddlewareInterface', 'Interop\Http\ServerMiddleware\MiddlewareInterface');
@@ -34,7 +35,7 @@ class ConnectivePage implements MiddlewareInterface
     const DEFAULT_RESOURCE = 'index';
     const DEFAULT_ACTION = 'index';
 
-    protected $actionFactory;
+    protected $container;
 
     protected $config;
 
@@ -49,13 +50,13 @@ class ConnectivePage implements MiddlewareInterface
     protected $currentHelper;
 
     public function __construct(
-        $actionFactory,
+        $container,
         array $config = [],
         CurrentHelper $currentHelper = null,
         ModuleHelper $moduleHelper = null
     )
     {
-        $this->actionFactory = $actionFactory;
+        $this->container = $container;
         $this->config = $config;
         $this->currentHelper = $currentHelper;
         $this->moduleHelper = $moduleHelper;
@@ -74,21 +75,23 @@ class ConnectivePage implements MiddlewareInterface
         $actionClass = $this->getActionClass($request);
         $this->currentHelper->setDefaultContext($actionClass);
 
-        $action = ($this->actionFactory)($actionClass);
+        $action = $this->container->get($actionClass);
 
         $this->configureEventManager($action);
+        $this->configurePluginManager($action);
 
         return $action;
     }
 
     protected function getActionClass($request)
     {
-        $name = [];
-        //$name['resource'] = lcfirst($this->currentHelper->currentResource());
         $filter = new DashToCamelCase();
 
+        $name = [];
+
+        #$name['namespace'] = $this->getNamespace(lcfirst($filter->filter($this->currentHelper->currentResource())));
         $name['namespace'] = $this->getNamespace(lcfirst($filter->filter($this->currentHelper->currentResource())));
-        $name['dir'] = 'Action';
+        #$name['dir'] = 'Action';
         //$area = $route->getOptions()['area'] ?? RendererMiddleware::AREA_DEFAULT;
         $area = $request->getAttribute('area', RendererMiddleware::AREA_DEFAULT);
         if ($area !== RendererMiddleware::AREA_DEFAULT) {
@@ -103,10 +106,15 @@ class ConnectivePage implements MiddlewareInterface
 
     protected function getNamespace($mnemo)
     {
+        // There is no real case when need to use "moduleHelper" for getting module namespace from DB.
+        // ZF3 use "controllers" key in configuration by default.
+        // It follows from this that we use "actions" key for our implementation.
+        #if ($this->moduleHelper && ($module = $this->moduleHelper->getBy($mnemo, 'mnemo'))) {
+        #    $namespace = $module->getName();
+        #} else
+
         $namespace = null;
-        if ($this->moduleHelper && ($module = $this->moduleHelper->getBy($mnemo, 'mnemo'))) {
-            $namespace = $module->getName();
-        } elseif (isset($this->config['actions'][$mnemo])) {
+        if (isset($this->config['actions'][$mnemo])) {
             $namespace = $this->config['actions'][$mnemo];
         } else {
             throw new RuntimeException(sprintf(
@@ -131,8 +139,17 @@ class ConnectivePage implements MiddlewareInterface
             }
 
             //$container->has('SharedEventManager') ? $container->get('SharedEventManager') : null
-            $eventManager = new EventManager(($this->actionFactory)('SharedEventManager'));
+            $eventManager = new EventManager($this->container->get('SharedEventManager'));
             $action->setEventManager($eventManager);
         }
+    }
+
+    protected function configurePluginManager($action)
+    {
+        if (!method_exists($action, 'setPluginManager')) {
+            return;
+        }
+
+        $action->setPluginManager($this->container->get('ControllerPluginManager'));
     }
 }
