@@ -57,7 +57,7 @@ abstract class AbstractAction implements
      * @return Response|mixed
      * @deprecated
      */
-    public function dispatch(/*Request*/ $request, Response $response = null)
+    public function dispatch(Request $request, Response $response = null)
     {}
 
     /**
