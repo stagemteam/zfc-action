@@ -1,10 +1,11 @@
 <?php
 
-namespace Stagem\ZfcAction\Page;
+namespace Stagem\ZfcAction\Page\Factory;
 
 use Psr\Container\ContainerInterface;
 use Popov\ZfcCurrent\CurrentHelper;
 use Popov\ZfcEntity\Helper\ModuleHelper;
+use Stagem\ZfcAction\Page\ConnectivePage;
 
 class ConnectivePageFactory
 {

@@ -31,15 +31,18 @@ use Zend\Diactoros\Response\SapiEmitter;
 use Zend\Diactoros\Response\TextResponse;
 //use Zend\Expressive\Router;
 //use Zend\Expressive\Template;
-use Zend\Stdlib\Exception\RuntimeException;
+//use Zend\Stdlib\Exception;
+use Zend\View\Exception;
 use Zend\View\Model\ViewModel;
 use Zend\View\Model\JsonModel;
+use Zend\View\Model\ModelInterface as Model;
 //use Zend\View\Renderer\PhpRenderer;
 use Zend\View\Renderer\RendererInterface;
 use Zend\Mvc\View\Http\ViewManager;
 use Zend\Http\Response\Stream as HttpStream;
 use Zend\Diactoros\Stream;
 use Zend\Diactoros\Response;
+use Zend\View\Renderer\TreeRendererInterface;
 
 class RendererMiddleware implements MiddlewareInterface
 {
@@ -91,8 +94,7 @@ class RendererMiddleware implements MiddlewareInterface
         $viewModel->getVariable('layout') || $viewModel->setVariable('layout', $templates['layout']);
         $viewModel->getTemplate() || $viewModel->setTemplate($templates['name']);
 
-        //$content = $this->renderer->render($viewModel->getTemplate(), $viewModel);
-        $content = $this->renderer->render($viewModel);
+        $content = $this->render($viewModel);
 
         // "view" manager is set in MVC application only.
         // We reject usage "layout" plugin in middleware.
@@ -123,7 +125,7 @@ class RendererMiddleware implements MiddlewareInterface
         $area = $request->getAttribute('area', self::AREA_DEFAULT);
 
         if (!$module || !$action) {
-            throw new RuntimeException(
+            throw new Exception\RuntimeException(
                 'Cannot resolve action name. '
                 . 'Check if your route has "resource" and "action" as named variables or add relative options to route'
             );
@@ -138,5 +140,49 @@ class RendererMiddleware implements MiddlewareInterface
             'layout' => $layout,
             'name' => $templateName,
         ];
+    }
+
+    public function render(Model $model)
+    {
+        // If we have children, render them first, but only if:
+        // a) the renderer does not implement TreeRendererInterface, or
+        // b) it does, but canRenderTrees() returns false
+        if ($model->hasChildren()
+            && (! $this->renderer instanceof TreeRendererInterface
+                || ! $this->renderer->canRenderTrees())
+        ) {
+            $this->renderChildren($model);
+        }
+
+        //$content = $this->renderer->render($viewModel->getTemplate(), $viewModel);
+        return $this->renderer->render($model);
+    }
+
+    /**
+     * Loop through children, rendering each
+     *
+     * @param  Model $model
+     * @throws Exception\DomainException
+     * @return void
+     */
+    protected function renderChildren(Model $model)
+    {
+        foreach ($model as $child) {
+            if ($child->terminate()) {
+                throw new Exception\DomainException('Inconsistent state; child view model is marked as terminal');
+            }
+            $child->setOption('has_parent', true);
+            $result  = $this->render($child);
+            $child->setOption('has_parent', null);
+            $capture = $child->captureTo();
+            if (! empty($capture)) {
+                if ($child->isAppend()) {
+                    $oldResult = $model->{$capture};
+                    $model->setVariable($capture, $oldResult . $result);
+                } else {
+                    $model->setVariable($capture, $result);
+                }
+            }
+        }
     }
 }

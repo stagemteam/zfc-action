@@ -15,7 +15,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Interop\Http\Server\RequestHandlerInterface;
 
-use Zend\Expressive\Router\RouteResult;
 use Zend\Diactoros\Response\HtmlResponse;
 
 use Zend\ServiceManager\Factory\InvokableFactory;
@@ -28,7 +27,7 @@ use Zend\Diactoros\ServerRequest;
 use Zend\Stdlib\Exception\RuntimeException;
 use Zend\View\Model\ViewModel;
 use Zend\Filter\Word\DashToCamelCase;
-
+use Zend\Mvc\InjectApplicationEventInterface;
 
 class ConnectivePage implements MiddlewareInterface
 {
@@ -38,6 +37,8 @@ class ConnectivePage implements MiddlewareInterface
     protected $container;
 
     protected $config;
+
+    protected $routeParams;
 
     /**
      * @var ModuleHelper
@@ -64,40 +65,48 @@ class ConnectivePage implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        /** @var ServerRequest $action */
-        $action = $this->getAction($request);
+        $this->routeParams = $this->currentHelper->currentRouteParams();
+
+        // We use this approach for goto plugin compatibility
+        $action = $this->get($this->routeParams['resource']);
 
         return $action->process($request, $handler);
     }
 
-    protected function getAction(ServerRequestInterface $request)
+    public function setRouteParams($routeParams)
     {
-        $actionClass = $this->getActionClass($request);
+        $this->routeParams = $routeParams;
+    }
+
+    public function get($resource)
+    {
+        $actionClass = $this->getActionClass($resource);
         $this->currentHelper->setDefaultContext($actionClass);
 
         $action = $this->container->get($actionClass);
 
+        $this->configureEvent($action);
         $this->configureEventManager($action);
         $this->configurePluginManager($action);
 
         return $action;
     }
 
-    protected function getActionClass($request)
+    protected function getActionClass($resource)
     {
         $filter = new DashToCamelCase();
 
         $name = [];
 
         #$name['namespace'] = $this->getNamespace(lcfirst($filter->filter($this->currentHelper->currentResource())));
-        $name['namespace'] = $this->getNamespace(lcfirst($filter->filter($this->currentHelper->currentResource())));
+        $name['namespace'] = $this->getNamespace(lcfirst($filter->filter($resource)));
         #$name['dir'] = 'Action';
         //$area = $route->getOptions()['area'] ?? RendererMiddleware::AREA_DEFAULT;
-        $area = $request->getAttribute('area', RendererMiddleware::AREA_DEFAULT);
+        $area = $this->routeParams['area'] ?? RendererMiddleware::AREA_DEFAULT;
         if ($area !== RendererMiddleware::AREA_DEFAULT) {
             $name['area'] = ucfirst($area);
         }
-        $name['action'] = ucfirst($filter->filter($this->currentHelper->currentAction()));
+        $name['action'] = ucfirst($filter->filter($this->routeParams['action']));
 
         //unset($name['resource']);
 
@@ -124,6 +133,14 @@ class ConnectivePage implements MiddlewareInterface
         }
 
         return $namespace;
+    }
+
+    protected function configureEvent($action)
+    {
+        if ($action instanceof InjectApplicationEventInterface) {
+            $event = $this->container->get('Application')->getMvcEvent();
+            $action->setEvent($event);
+        }
     }
 
     protected function configureEventManager($action)

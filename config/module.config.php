@@ -11,8 +11,14 @@ return [
 
     'dependencies' => [
         'factories' => [
-            Page\ConnectivePage::class => Page\ConnectivePageFactory::class,
+            Page\ConnectivePage::class => Page\Factory\ConnectivePageFactory::class,
             Page\RendererMiddleware::class => Page\Factory\RendererMiddlewareFactory::class,
+        ],
+    ],
+
+    'controller_plugins' => [
+        'factories' => [
+            'goto' => Page\Plugin\Factory\GotoPluginFactory::class,
         ],
     ],
 ];
