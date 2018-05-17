@@ -76,7 +76,7 @@ If you want use in third party packages you have to prepare CurrentHelper for us
 *controller/action* dispatching:
 ```php
 $this->currentHelper->setDefaultContext($actionOtControlletClassName);
-$this->currentHelper->setResource($request->getAttribute('resource', self::DEFAULT_RESOURCE));
+$this->currentHelper->setResource($request->getAttribute('controller', self::DEFAULT_RESOURCE));
 $this->currentHelper->setAction($request->getAttribute('action', self::DEFAULT_ACTION));
 $this->currentHelper->setRequest($request);
 $this->currentHelper->setRoute($route->getMatchedRoute());

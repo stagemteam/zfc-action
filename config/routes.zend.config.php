@@ -18,14 +18,14 @@ namespace Stagem\ZfcAction;
 $routeDefault = [
     'type' => 'Segment',
     'options' => [
-        'route' => '/[:resource[/[:action]]]', // global route
+        'route' => '/[:controller[/[:action]]]', // global route
         'constraints' => [
-            'resource' => '[a-zA-Z]?[a-zA-Z0-9_-]*',
+            'controller' => '[a-zA-Z]?[a-zA-Z0-9_-]*',
             'action' => '[a-zA-Z]?[a-zA-Z0-9_-]*',
         ],
         'defaults' => [
             'middleware' => [Page\ConnectivePage::class, Page\RendererMiddleware::class],
-            'resource' => 'index',
+            'controller' => 'index',
             'action' => 'index',
         ],
     ],
@@ -98,7 +98,7 @@ return [
                 'defaults' => [
                     'middleware' => [Page\ConnectivePage::class, Page\RendererMiddleware::class],
                     //'middleware' => [\Stagem\Layout\Action\HomeAction::class, Page\RendererMiddleware::class],
-                    'resource' => 'home',
+                    'controller' => 'home',
                     'action' => 'index',
                 ],
             ],
@@ -115,7 +115,7 @@ return [
                 'defaults' => [
                     'middleware' => [Page\ConnectivePage::class, Page\RendererMiddleware::class],
                     'area' => 'admin',
-                    'resource' => 'dashboard',
+                    'controller' => 'dashboard',
                     'action' => 'index',
                 ],
             ],

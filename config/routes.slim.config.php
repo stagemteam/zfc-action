@@ -23,7 +23,7 @@ $default = [
             'lang' => '[a-z]{2}',
         ],
         'defaults' => [
-            'resource' => 'index',
+            'controller' => 'index',
             'action' => 'home',
             //'locale' => 'en'
         ],
@@ -44,17 +44,17 @@ return [
     ]),
     ArrayUtils::merge($default, [
         'name' => 'default',
-        'path' => '(/:lang)(/:resource(/:action(/:id)))',
-        //'path' => '/[:resource[/[:action[/[:id]]]]]',
+        'path' => '(/:lang)(/:controller(/:action(/:id)))',
+        //'path' => '/[:controller[/[:action[/[:id]]]]]',
         'middleware' => [Page\ConnectivePage::class, Page\RendererMiddleware::class],
         'options' => [
             'conditions' => [
-                'resource' => '[a-zA-Z]?[a-zA-Z0-9_-]*',
+                'controller' => '[a-zA-Z]?[a-zA-Z0-9_-]*',
                 'action' => '[a-zA-Z]?[a-zA-Z0-9_-]*',
                 'id' => '[1-9]\d*',
             ],
             'defaults' => [
-                'resource' => 'index',
+                'controller' => 'index',
                 'action' => 'index',
                 'id' => '',
             ],
@@ -62,17 +62,17 @@ return [
     ]),
     ArrayUtils::merge($default, [
         'name' => 'default/page',
-        //'path' => '/[:resource[/[:action[/page:page]]]]',
-        'path' => '(/:lang)(/:resource(/:action(/page/:page)))',
+        //'path' => '/[:controller[/[:action[/page:page]]]]',
+        'path' => '(/:lang)(/:controller(/:action(/page/:page)))',
         'middleware' => [Page\ConnectivePage::class, Page\RendererMiddleware::class],
         'options' => [ // this don't work automatically, you need check this by hand
             'conditions' => [
-                'resource' => '[a-zA-Z]?[a-zA-Z0-9_-]*',
+                'controller' => '[a-zA-Z]?[a-zA-Z0-9_-]*',
                 'action' => '[a-zA-Z]?[a-zA-Z0-9_-]*',
                 'page' => '[1-9]\d*',
             ],
             'defaults' => [
-                'resource' => 'index',
+                'controller' => 'index',
                 'action' => 'index',
                 'page' => '1',
             ],
@@ -80,17 +80,17 @@ return [
     ]),
     ArrayUtils::merge($default, [
         'name' => 'default/more',
-        //'path' => '/[:resource[/[:action[/:more]]]]',
-        'path' => '(/:lang)(/:resource(/:action(/:more+)))',
+        //'path' => '/[:controller[/[:action[/:more]]]]',
+        'path' => '(/:lang)(/:controller(/:action(/:more+)))',
         'middleware' => [Page\ConnectivePage::class, Page\RendererMiddleware::class],
         'options' => [
             'conditions' => [
-                'resource' => '[a-zA-Z]?[a-zA-Z0-9_-]*',
+                'controller' => '[a-zA-Z]?[a-zA-Z0-9_-]*',
                 'action' => '[a-zA-Z]?[a-zA-Z0-9_-]*',
                 'more' => '.*',
             ],
             'defaults' => [
-                'resource' => 'index',
+                'controller' => 'index',
                 'action' => 'index',
             ],
         ],

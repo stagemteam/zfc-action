@@ -25,13 +25,12 @@ use Zend\EventManager\EventManagerAwareTrait;
 use Zend\EventManager\EventManager;
 use Zend\Diactoros\ServerRequest;
 use Zend\Stdlib\Exception\RuntimeException;
-use Zend\View\Model\ViewModel;
 use Zend\Filter\Word\DashToCamelCase;
 use Zend\Mvc\InjectApplicationEventInterface;
 
 class ConnectivePage implements MiddlewareInterface
 {
-    const DEFAULT_RESOURCE = 'index';
+    const DEFAULT_CONTROLLER = 'index';
     const DEFAULT_ACTION = 'index';
 
     protected $container;
@@ -68,7 +67,7 @@ class ConnectivePage implements MiddlewareInterface
         $this->routeParams = $this->currentHelper->currentRouteParams();
 
         // We use this approach for goto plugin compatibility
-        $action = $this->get($this->routeParams['resource']);
+        $action = $this->get($this->routeParams['controller']);
 
         return $action->process($request, $handler);
     }
@@ -108,7 +107,7 @@ class ConnectivePage implements MiddlewareInterface
         }
         $name['action'] = ucfirst($filter->filter($this->routeParams['action']));
 
-        //unset($name['resource']);
+        //unset($name['controller']);
 
         return implode('\\', $name) . 'Action';
     }

@@ -119,8 +119,8 @@ class RendererMiddleware implements MiddlewareInterface
      */
     protected function resolveTemplates($request)
     {
-        #$module = $request->getAttribute('resource', $request->getAttribute('controller'));
-        $module = $request->getAttribute('resource');
+        #$module = $request->getAttribute('controller', $request->getAttribute('controller'));
+        $module = $request->getAttribute('controller');
         $action = $request->getAttribute('action');
         $area = $request->getAttribute('area', self::AREA_DEFAULT);
 
