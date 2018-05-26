@@ -15,6 +15,8 @@
 
 namespace Stagem\ZfcAction;
 
+use Popov\ZfcPermission\PermissionMiddleware;
+
 $routeDefault = [
     'type' => 'Segment',
     'options' => [
@@ -97,9 +99,8 @@ return [
                 'route' => '/',
                 'defaults' => [
                     'middleware' => [Page\ConnectivePage::class, Page\RendererMiddleware::class],
-                    //'middleware' => [\Stagem\Layout\Action\HomeAction::class, Page\RendererMiddleware::class],
-                    'controller' => 'home',
-                    'action' => 'index',
+                    'controller' => 'action',
+                    'action' => 'home',
                 ],
             ],
             'may_terminate' => true,
