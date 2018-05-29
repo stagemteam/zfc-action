@@ -28,6 +28,7 @@ use Zend\Stdlib\DispatchableInterface as Dispatchable;
 use Zend\Stdlib\RequestInterface as Request;
 use Zend\Stdlib\ResponseInterface as Response;
 use Zend\EventManager\EventInterface as Event;
+use Zend\Router\RouteMatch;
 use Zend\Mvc\MvcEvent;
 use Stagem\ZfcAction\MiddlewareInterface;
 use Zend\View\Model\ViewModel;
@@ -161,6 +162,7 @@ abstract class AbstractAction implements
      */
     public function onDispatch(MvcEvent $e)
     {
+        /** @var \Zend\Router\RouteMatch $routeMatch */
         $routeMatch = $e->getRouteMatch();
         if (! $routeMatch) {
             /**
@@ -174,6 +176,7 @@ abstract class AbstractAction implements
         foreach ($routeMatch->getParams() as $key => $value) {
             $request = $request->withAttribute($key, $value);
         }
+        $request = $request->withAttribute(RouteMatch::class, $routeMatch);
 
         $actionResponse = $this->action($request);
 

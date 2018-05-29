@@ -2,7 +2,9 @@
 
 namespace Stagem\ZfcAction\Page;
 
-//class_alias('Interop\Http\Server\MiddlewareInterface', 'Interop\Http\ServerMiddleware\MiddlewareInterface');
+// @todo wait until they will start to use Pst in codebase @see https://github.com/zendframework/zend-mvc/blob/master/src/MiddlewareListener.php#L11
+class_alias('Interop\Http\Server\MiddlewareInterface', 'Interop\Http\ServerMiddleware\MiddlewareInterface');
+
 
 use Popov\ZfcCurrent\CurrentHelper;
 use Popov\ZfcEntity\Helper\ModuleHelper;
@@ -69,6 +71,9 @@ class ConnectivePage implements MiddlewareInterface
         // We use this approach for goto plugin compatibility
         $action = $this->get($this->routeParams['controller']);
 
+        // We set defaultContext here in order to avoid override value during goto plugin is called
+        $this->currentHelper->setDefaultContext($action);
+
         return $action->process($request, $handler);
     }
 
@@ -80,7 +85,6 @@ class ConnectivePage implements MiddlewareInterface
     public function get($resource)
     {
         $actionClass = $this->getActionClass($resource);
-        $this->currentHelper->setDefaultContext($actionClass);
 
         $action = $this->container->get($actionClass);
 

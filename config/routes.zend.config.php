@@ -116,8 +116,8 @@ return [
                 'defaults' => [
                     'middleware' => [Page\ConnectivePage::class, Page\RendererMiddleware::class],
                     'area' => 'admin',
-                    'controller' => 'dashboard',
-                    'action' => 'index',
+                    'controller' => 'admin',
+                    'action' => 'dashboard',
                 ],
             ],
             'may_terminate' => true,
