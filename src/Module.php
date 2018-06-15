@@ -15,6 +15,9 @@
 
 namespace Stagem\ZfcAction;
 
+use Zend\ModuleManager\ModuleManager;
+use Zend\Mvc\MvcEvent;
+
 class Module
 {
     public function getConfig()
