@@ -102,14 +102,14 @@ class ConnectivePage implements MiddlewareInterface
         $name = [];
 
         #$name['namespace'] = $this->getNamespace(lcfirst($filter->filter($this->currentHelper->currentResource())));
-        $name['namespace'] = $this->getNamespace(lcfirst($filter->filter($resource)));
+        $name['namespace'] = $filter->filter($this->getNamespace(lcfirst($resource)));
         #$name['dir'] = 'Action';
         //$area = $route->getOptions()['area'] ?? RendererMiddleware::AREA_DEFAULT;
         $area = $this->routeParams['area'] ?? RendererMiddleware::AREA_DEFAULT;
         if ($area !== RendererMiddleware::AREA_DEFAULT) {
             $name['area'] = ucfirst($area);
         }
-        $name['action'] = ucfirst($filter->filter($this->routeParams['action']));
+        $name['action'] = $filter->filter(ucfirst($this->routeParams['action']));
 
         //unset($name['controller']);
 

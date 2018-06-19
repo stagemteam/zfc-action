@@ -29,6 +29,20 @@ return [
             'goto' => Page\Plugin\Factory\GotoPluginFactory::class,
         ],
     ],
+    
+    'route_manager' => [
+        'aliases' => [
+            'Wildcard' => Router\Http\Wildcard::class,
+            'wildcard' => Router\Http\Wildcard::class,
+            'wildCard' => Router\Http\Wildcard::class,
+            'WildCard' => Router\Http\Wildcard::class,
+        ],
+        'factories' => [
+            Router\Http\Wildcard::class => RouteInvokableFactory::class,
+            \Zend\Router\Http\Wildcard::class => RouteInvokableFactory::class,
+            'zendmvcrouterhttpwildcard' => RouteInvokableFactory::class,
+        ],
+    ],
 
     // mvc
     'view_manager' => [
