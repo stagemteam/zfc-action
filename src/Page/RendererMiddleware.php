@@ -40,6 +40,7 @@ use Zend\View\Model\ModelInterface as Model;
 use Zend\View\Renderer\RendererInterface;
 use Zend\Mvc\View\Http\ViewManager;
 use Zend\Http\Response\Stream as HttpStream;
+//use Zend\Http\Request as HttpRequest;
 use Zend\Diactoros\Stream;
 use Zend\Diactoros\Response;
 use Zend\View\Renderer\TreeRendererInterface;
@@ -84,10 +85,10 @@ class RendererMiddleware implements MiddlewareInterface
             }
             return $response->withBody($body)
                 ->withHeader('Content-Length', "{$viewModel->getContentLength()}");
-        }
-
-        if ($viewModel instanceof JsonModel && $viewModel->terminate()) {
+        } else if ($viewModel instanceof JsonModel && $viewModel->terminate()) {
              return new JsonResponse($viewModel->getVariables());
+        } else if ($request->hasHeader('X-Requested-With')) {
+            $viewModel->setTerminal(true);
         }
 
         $templates = $this->resolveTemplates($request);
@@ -101,7 +102,7 @@ class RendererMiddleware implements MiddlewareInterface
         // Instead if needed you should inject "layout" variable in your ViewModel.
         // By default "layout/default" template is usage.
         // This is correspond to "area" value in route option which is resolved to 'layout::' + $area.
-        if ($this->view) {
+        if ($this->view && !$viewModel->terminate()) {
             $layout = $this->view->getViewModel();
             $layout->setTemplate($viewModel->getVariable('layout'));
             $layout->setVariable('content', $content);
