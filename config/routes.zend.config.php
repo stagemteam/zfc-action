@@ -20,7 +20,7 @@ use Popov\ZfcPermission\PermissionMiddleware;
 $routeDefault = [
     'type' => 'Segment',
     'options' => [
-        'route' => '/[:controller[/[:action]]]', // global route
+        'route' => '[/[:controller[/[:action]]]]', // global route
         'constraints' => [
             'controller' => '[a-zA-Z]?[a-zA-Z0-9_-]*',
             'action' => '[a-zA-Z]?[a-zA-Z0-9_-]*',
@@ -110,8 +110,9 @@ return [
         ],
         // global backend routes
         'admin' => [
-            'type' => 'Literal',
+            'type' => 'Segment',
             'options' => [
+                //'route' => '[/admin[/]]', //admin
                 'route' => '/admin', //admin
                 'defaults' => [
                     'middleware' => [Page\ConnectivePage::class, Page\RendererMiddleware::class],
