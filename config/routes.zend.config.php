@@ -113,7 +113,8 @@ return [
             'type' => 'Segment',
             'options' => [
                 //'route' => '[/admin[/]]', //admin
-                'route' => '/admin', //admin
+                //'route' => '/admin', //admin
+                'route' => '/:area', //admin
                 'defaults' => [
                     'middleware' => [Page\ConnectivePage::class, Page\RendererMiddleware::class],
                     'area' => 'admin',

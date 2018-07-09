@@ -68,10 +68,18 @@ class ConnectivePage implements MiddlewareInterface
     {
         $this->routeParams = $this->currentHelper->currentRouteParams();
 
-        // We use this approach for goto plugin compatibility
-        $action = $this->get($this->routeParams['controller']);
+        // "area" is used only for inner purpose and should be avoided in route generation.
+        // This unset() fix back compatibility with wildcard route
+        //$request = $request->withAttribute('area', $this->routeParams['area']);
+        #unset($routeParams['area']);
+        #$this->currentHelper->setRouteParams($routeParams);
+        #$this->currentHelper->setRequest($request);
 
-        // We set defaultContext here in order to avoid override value during goto plugin is called
+        // Use this approach for goto plugin compatibility
+        $action = $this->get($request->getAttribute('controller'));
+
+
+        // Set defaultContext here in order to avoid override value during goto plugin is called
         $this->currentHelper->setDefaultContext($action);
 
         return $action->process($request, $handler);
@@ -100,18 +108,17 @@ class ConnectivePage implements MiddlewareInterface
         $filter = new DashToCamelCase();
 
         $name = [];
-
         #$name['namespace'] = $this->getNamespace(lcfirst($filter->filter($this->currentHelper->currentResource())));
         $name['namespace'] = $filter->filter($this->getNamespace(lcfirst($resource)));
         #$name['dir'] = 'Action';
         //$area = $route->getOptions()['area'] ?? RendererMiddleware::AREA_DEFAULT;
         $area = $this->routeParams['area'] ?? RendererMiddleware::AREA_DEFAULT;
+        //$area = $request->getAttribute('area') ?? RendererMiddleware::AREA_DEFAULT;
         if ($area !== RendererMiddleware::AREA_DEFAULT) {
             $name['area'] = ucfirst($area);
         }
         $name['action'] = $filter->filter(ucfirst($this->routeParams['action']));
-
-        //unset($name['controller']);
+        //$name['action'] = $filter->filter(ucfirst($request->getAttribute('action')));
 
         return implode('\\', $name) . 'Action';
     }
