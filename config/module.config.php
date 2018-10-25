@@ -3,6 +3,7 @@
 namespace Stagem\ZfcAction;
 
 return [
+
     // mvc
     'router' => require 'routes.zend.config.php',
 
