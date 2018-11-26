@@ -15,7 +15,9 @@
 
 namespace Stagem\ZfcAction;
 
-use Popov\ZfcPermission\PermissionMiddleware;
+$middleware = file_exists(realpath('config/middleware.config.php'))
+    ? require_once realpath('config/middleware.config.php')
+    : [Page\ConnectivePage::class, Page\RendererMiddleware::class];
 
 $routeDefault = [
     'type' => 'Segment',
@@ -26,7 +28,7 @@ $routeDefault = [
             'action' => '[a-zA-Z]?[a-zA-Z0-9_-]*',
         ],
         'defaults' => [
-            'middleware' => [Page\ConnectivePage::class, Page\RendererMiddleware::class],
+            'middleware' => $middleware,
             'controller' => 'index',
             'action' => 'index',
         ],
@@ -98,7 +100,7 @@ return [
             'options' => [
                 'route' => '/',
                 'defaults' => [
-                    'middleware' => [Page\ConnectivePage::class, Page\RendererMiddleware::class],
+                    'middleware' => $middleware,
                     'controller' => 'action',
                     'action' => 'home',
                 ],
@@ -116,7 +118,7 @@ return [
                 //'route' => '/admin', //admin
                 'route' => '/:area', //admin
                 'defaults' => [
-                    'middleware' => [Page\ConnectivePage::class, Page\RendererMiddleware::class],
+                    'middleware' => $middleware,
                     'area' => 'admin',
                     'controller' => 'admin',
                     'action' => 'dashboard',

@@ -3,8 +3,9 @@
 namespace Stagem\ZfcAction\Page;
 
 // @todo wait until they will start to use Pst in codebase @see https://github.com/zendframework/zend-mvc/blob/master/src/MiddlewareListener.php#L11
-class_alias('Interop\Http\Server\MiddlewareInterface', 'Interop\Http\ServerMiddleware\MiddlewareInterface');
-
+if (!interface_exists('Interop\Http\ServerMiddleware\MiddlewareInterface')) {
+    class_alias('Interop\Http\Server\MiddlewareInterface', 'Interop\Http\ServerMiddleware\MiddlewareInterface');
+}
 
 use Popov\ZfcCurrent\CurrentHelper;
 use Popov\ZfcEntity\Helper\ModuleHelper;
