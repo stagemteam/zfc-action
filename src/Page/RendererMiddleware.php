@@ -36,6 +36,7 @@ use Zend\View\Renderer\RendererInterface;
 use Zend\Mvc\View\Http\ViewManager;
 use Zend\Http\Response\Stream as HttpStream;
 use Zend\View\Renderer\TreeRendererInterface;
+use Zend\View\ViewEvent;
 
 class RendererMiddleware implements MiddlewareInterface
 {
@@ -75,6 +76,12 @@ class RendererMiddleware implements MiddlewareInterface
         $viewModel->getVariable('layout') || $viewModel->setVariable('layout', $templates['layout']);
         $viewModel->getTemplate() || $viewModel->setTemplate($templates['name']);
 
+        if ($this->view) {
+            // Usage: $sharedEvents->attach('Zend\View\View', MvcEvent::EVENT_RENDER, function($event){});
+            $eventManager = $this->view->getView()->getEventManager(); // @todo Pass EventManager as arguments to constructor
+            $eventManager->trigger('render', $viewModel, ['context' => $this, 'viewManager' => $this->view]);
+        }
+
         $content = $this->render($viewModel);
 
         // "view" manager is set in MVC application only.
@@ -83,9 +90,19 @@ class RendererMiddleware implements MiddlewareInterface
         // By default "layout/default" template is usage.
         // This is correspond to "area" value in route option which is resolved to 'layout::' + $area.
         if ($this->view && !$viewModel->terminate()) {
+            #$view = $this->view->getView();
+            #$eventManager->attach(ViewEvent::EVENT_RESPONSE, function($event) use (& $content) {
+                // Be aware! We listen ViewEvent::EVENT_RESPONSE and reassign $content variable
+                // which is passed by reference. After that rendered content is returned as HtmlResponse($content).
+                // This callback is called after $view->render($layout).
+            #    $content = $event->getResult();
+            #}, -1000);
+
             $layout = $this->view->getViewModel();
             $layout->setTemplate($viewModel->getVariable('layout'));
             $layout->setVariable('content', $content);
+
+            #$view->render($layout);
             $content = $this->renderer->render($layout);
         }
 
