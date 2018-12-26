@@ -90,19 +90,10 @@ class RendererMiddleware implements MiddlewareInterface
         // By default "layout/default" template is usage.
         // This is correspond to "area" value in route option which is resolved to 'layout::' + $area.
         if ($this->view && !$viewModel->terminate()) {
-            #$view = $this->view->getView();
-            #$eventManager->attach(ViewEvent::EVENT_RESPONSE, function($event) use (& $content) {
-                // Be aware! We listen ViewEvent::EVENT_RESPONSE and reassign $content variable
-                // which is passed by reference. After that rendered content is returned as HtmlResponse($content).
-                // This callback is called after $view->render($layout).
-            #    $content = $event->getResult();
-            #}, -1000);
-
             $layout = $this->view->getViewModel();
             $layout->setTemplate($viewModel->getVariable('layout'));
             $layout->setVariable('content', $content);
 
-            #$view->render($layout);
             $content = $this->renderer->render($layout);
         }
 
