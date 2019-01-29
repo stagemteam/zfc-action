@@ -115,8 +115,8 @@ return [
             'type' => 'Segment',
             'options' => [
                 //'route' => '[/admin[/]]', //admin
-                //'route' => '/admin', //admin
-                'route' => '/:area', //admin
+                'route' => '/admin', //admin
+                //'route' => '/:area', //admin
                 'defaults' => [
                     'middleware' => $middleware,
                     'area' => 'admin',
